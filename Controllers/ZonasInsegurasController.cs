@@ -15,9 +15,18 @@ public class ZonasInsegurasController : Controller
     }
 
     // GET: ZonasInseguras
-    public async Task<IActionResult> Index()
+    public async Task<IActionResult> Index(int? nivel)
     {
-        return View(await _context.ZonasInseguras.ToListAsync());
+        ViewBag.NivelActual = nivel;
+
+        var zonas = _context.ZonasInseguras.AsQueryable();
+
+        if (nivel.HasValue)
+        {
+            zonas = zonas.Where(z => z.NivelPeligro == nivel.Value);
+        }
+
+        return View(await zonas.ToListAsync());
     }
 
     // GET: ZonasInseguras/Details/5
