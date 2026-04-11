@@ -161,6 +161,57 @@
 }
 
 /* ============================================
+   FILTER BAR
+   ============================================ */
+.zonas-filter {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+
+.zonas-filter-label {
+  font-family: "Outfit", sans-serif;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: var(--zi-dark);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.zonas-filter-buttons {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.zonas-filter-btn {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-family: "Outfit", sans-serif;
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-decoration: none;
+  color: #4b5563;
+  background: #f3f4f6;
+  border: 2px solid transparent;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.zonas-filter-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--zi-shadow-sm);
+  color: #1f2937;
+}
+
+.zonas-filter-btn-active {
+  border-color: var(--zi-dark);
+  box-shadow: var(--zi-shadow-sm);
+}
+
+/* ============================================
    CARDS GRID
    ============================================ */
 .zonas-grid {

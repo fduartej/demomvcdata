@@ -30,6 +30,17 @@
         <a asp-action="Create" class="btn-zona-primary">Registrar Nueva Zona</a>
     </div>
 
+    <div class="zonas-filter">
+        <span class="zonas-filter-label">Filtrar por nivel:</span>
+        <div class="zonas-filter-buttons">
+            <a asp-action="Index" class="zonas-filter-btn @(ViewBag.NivelActual == null ? "zonas-filter-btn-active" : "")">Todos</a>
+            @for (int i = 1; i <= 5; i++)
+            {
+                <a asp-action="Index" asp-route-nivel="@i" class="zonas-filter-btn nivel-@i @(ViewBag.NivelActual != null && (int)ViewBag.NivelActual == i ? "zonas-filter-btn-active" : "")">Nivel @i</a>
+            }
+        </div>
+    </div>
+
     @if (!Model.Any())
     {
         <div class="zonas-empty">
