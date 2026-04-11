@@ -1,23 +1,41 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.EntityFrameworkCore;
 using demomvcdata.Data;
 using demomvcdata.Models;
+using StackExchange.Redis;
+using System.Text.Json;
 
 namespace demomvcdata.Controllers;
 
 public class ZonasInsegurasController : Controller
 {
     private readonly ApplicationDbContext _context;
+    private readonly IDistributedCache _cache;
+    private readonly ILogger<ZonasInsegurasController> _logger;
 
-    public ZonasInsegurasController(ApplicationDbContext context)
+
+    private const string CacheKeyPrefix = "zonas-inseguras:index";
+
+    public ZonasInsegurasController(ApplicationDbContext context, IDistributedCache cache, ILogger<ZonasInsegurasController> logger)
     {
         _context = context;
+        _cache = cache;
+        _logger = logger;
     }
 
     // GET: ZonasInseguras
     public async Task<IActionResult> Index(int? nivel)
     {
         ViewBag.NivelActual = nivel;
+
+        var cacheKey = BuildCacheKey(nivel);
+        var zonasDesdeCache = await TryGetIndexFromCacheAsync(cacheKey);
+        if (zonasDesdeCache != null)
+        {
+            _logger.LogInformation("Zonas inseguras obtenidas desde la caché.");
+            return View(zonasDesdeCache);
+        }
 
         var zonas = _context.ZonasInseguras.AsQueryable();
 
@@ -26,7 +44,10 @@ public class ZonasInsegurasController : Controller
             zonas = zonas.Where(z => z.NivelPeligro == nivel.Value);
         }
 
-        return View(await zonas.ToListAsync());
+        var resultado = await zonas.ToListAsync();
+        await TrySetIndexInCacheAsync(cacheKey, resultado);
+
+        return View(resultado);
     }
 
     // GET: ZonasInseguras/Details/5
@@ -62,6 +83,7 @@ public class ZonasInsegurasController : Controller
         {
             _context.Add(zonaInsegura);
             await _context.SaveChangesAsync();
+            await InvalidateIndexCacheAsync();
             return RedirectToAction(nameof(Index));
         }
         return View(zonaInsegura);
@@ -99,6 +121,7 @@ public class ZonasInsegurasController : Controller
             {
                 _context.Update(zonaInsegura);
                 await _context.SaveChangesAsync();
+                await InvalidateIndexCacheAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
@@ -146,11 +169,83 @@ public class ZonasInsegurasController : Controller
         }
 
         await _context.SaveChangesAsync();
+        await InvalidateIndexCacheAsync();
         return RedirectToAction(nameof(Index));
     }
 
     private bool ZonaInseguraExists(int id)
     {
         return _context.ZonasInseguras.Any(e => e.Id == id);
+    }
+
+    private static string BuildCacheKey(int? nivel)
+    {
+        return nivel.HasValue ? $"{CacheKeyPrefix}:nivel:{nivel.Value}" : $"{CacheKeyPrefix}:all";
+    }
+
+    private async Task InvalidateIndexCacheAsync()
+    {
+        await TryRemoveCacheKeyAsync(BuildCacheKey(null));
+
+        for (var nivel = 1; nivel <= 5; nivel++)
+        {
+            await TryRemoveCacheKeyAsync(BuildCacheKey(nivel));
+        }
+    }
+
+    private async Task<List<ZonaInsegura>?> TryGetIndexFromCacheAsync(string cacheKey)
+    {
+        try
+        {
+            var zonasCached = await _cache.GetStringAsync(cacheKey);
+            if (string.IsNullOrWhiteSpace(zonasCached))
+            {
+                return null;
+            }
+
+            return JsonSerializer.Deserialize<List<ZonaInsegura>>(zonasCached);
+        }
+        catch (RedisConnectionException)
+        {
+            return null;
+        }
+        catch (RedisTimeoutException)
+        {
+            return null;
+        }
+    }
+
+    private async Task TrySetIndexInCacheAsync(string cacheKey, List<ZonaInsegura> zonas)
+    {
+        try
+        {
+            await _cache.SetStringAsync(
+                cacheKey,
+                JsonSerializer.Serialize(zonas),
+                new DistributedCacheEntryOptions
+                {
+                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
+                });
+        }
+        catch (RedisConnectionException)
+        {
+        }
+        catch (RedisTimeoutException)
+        {
+        }
+    }
+
+    private async Task TryRemoveCacheKeyAsync(string cacheKey)
+    {
+        try
+        {
+            await _cache.RemoveAsync(cacheKey);
+        }
+        catch (RedisConnectionException)
+        {
+        }
+        catch (RedisTimeoutException)
+        {
+        }
     }
 }

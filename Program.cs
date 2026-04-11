@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using demomvcdata.Data;
+using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +10,15 @@ var connectionString = builder.Configuration.GetConnectionString("DefaultConnect
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+var redisConfiguration = builder.Configuration["Redis:Configuration"];
+if (!string.IsNullOrWhiteSpace(redisConfiguration))
+{
+    builder.Services.AddStackExchangeRedisCache(options =>
+    {
+        options.ConfigurationOptions = BuildRedisConfigurationOptions(redisConfiguration);
+    });
+}
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
@@ -44,3 +54,37 @@ app.MapRazorPages()
    .WithStaticAssets();
 
 app.Run();
+
+static ConfigurationOptions BuildRedisConfigurationOptions(string redisConfiguration)
+{
+    if (Uri.TryCreate(redisConfiguration, UriKind.Absolute, out var redisUri) &&
+        (redisUri.Scheme.Equals("redis", StringComparison.OrdinalIgnoreCase) ||
+         redisUri.Scheme.Equals("rediss", StringComparison.OrdinalIgnoreCase)))
+    {
+        var options = new ConfigurationOptions
+        {
+            AbortOnConnectFail = false,
+            ConnectRetry = 2,
+            ConnectTimeout = 5000,
+            AsyncTimeout = 5000,
+            Ssl = redisUri.Scheme.Equals("rediss", StringComparison.OrdinalIgnoreCase)
+        };
+
+        options.EndPoints.Add(redisUri.Host, redisUri.Port > 0 ? redisUri.Port : 6379);
+
+        if (!string.IsNullOrWhiteSpace(redisUri.UserInfo))
+        {
+            var userInfoParts = redisUri.UserInfo.Split(':', 2);
+            options.User = Uri.UnescapeDataString(userInfoParts[0]);
+
+            if (userInfoParts.Length == 2)
+            {
+                options.Password = Uri.UnescapeDataString(userInfoParts[1]);
+            }
+        }
+
+        return options;
+    }
+
+    return ConfigurationOptions.Parse(redisConfiguration);
+}
