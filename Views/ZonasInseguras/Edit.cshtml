@@ -1,0 +1,75 @@
+@model demomvcdata.Models.ZonaInsegura
+
+@{
+    ViewData["Title"] = "Editar Zona Insegura";
+}
+
+<link rel="stylesheet" href="~/css/zonas-inseguras.css" asp-append-version="true" />
+
+<div class="zonas-container">
+    <div class="zona-form-container">
+        <div class="zona-form-card">
+            <div class="zona-form-header">
+                <h1 class="zona-form-title">Editar Zona</h1>
+                <p class="zona-form-subtitle">@Model.Nombre</p>
+            </div>
+            
+            <form asp-action="Edit">
+                <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+                <input type="hidden" asp-for="Id" />
+                
+                <div class="zona-form-group">
+                    <label asp-for="Nombre" class="zona-form-label"></label>
+                    <input asp-for="Nombre" class="zona-form-input" />
+                    <span asp-validation-for="Nombre" class="text-danger"></span>
+                </div>
+                
+                <div class="zona-form-group">
+                    <label asp-for="Direccion" class="zona-form-label"></label>
+                    <input asp-for="Direccion" class="zona-form-input" />
+                    <span asp-validation-for="Direccion" class="text-danger"></span>
+                </div>
+                
+                <div class="zona-form-group">
+                    <label asp-for="NivelPeligro" class="zona-form-label"></label>
+                    <select asp-for="NivelPeligro" class="zona-form-select">
+                        <option value="1">🟢 Nivel 1 - Bajo</option>
+                        <option value="2">🔵 Nivel 2 - Medio-Bajo</option>
+                        <option value="3">🟡 Nivel 3 - Medio</option>
+                        <option value="4">🟠 Nivel 4 - Alto</option>
+                        <option value="5">🔴 Nivel 5 - Muy Alto</option>
+                    </select>
+                    <span asp-validation-for="NivelPeligro" class="text-danger"></span>
+                </div>
+                
+                <div class="zona-form-group">
+                    <label asp-for="Descripcion" class="zona-form-label"></label>
+                    <textarea asp-for="Descripcion" class="zona-form-textarea"></textarea>
+                    <span asp-validation-for="Descripcion" class="text-danger"></span>
+                </div>
+                
+                <div class="zona-form-group">
+                    <label asp-for="FechaRegistro" class="zona-form-label"></label>
+                    <input asp-for="FechaRegistro" class="zona-form-input" type="date" />
+                    <span asp-validation-for="FechaRegistro" class="text-danger"></span>
+                </div>
+                
+                <div class="zona-form-group">
+                    <div class="zona-form-check">
+                        <input class="form-check-input" type="checkbox" asp-for="Activa" />
+                        <label class="form-check-label" asp-for="Activa"></label>
+                    </div>
+                </div>
+                
+                <div class="zona-form-actions">
+                    <input type="submit" value="Guardar Cambios" class="btn-zona-submit" />
+                    <a asp-action="Index" class="btn-zona-secondary">Cancelar</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

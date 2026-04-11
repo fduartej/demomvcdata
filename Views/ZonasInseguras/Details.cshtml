@@ -1,0 +1,66 @@
+@model demomvcdata.Models.ZonaInsegura
+
+@{
+    ViewData["Title"] = "Detalles Zona Insegura";
+}
+
+<link rel="stylesheet" href="~/css/zonas-inseguras.css" asp-append-version="true" />
+
+<div class="zonas-container">
+    <div class="zona-details-card">
+        <div class="zona-details-header">
+            <h1 class="zona-details-title">@Model.Nombre</h1>
+            <span class="zona-peligro-badge nivel-@Model.NivelPeligro">
+                Nivel @Model.NivelPeligro - @(Model.NivelPeligro switch { 1 => "Bajo", 2 => "Medio-Bajo", 3 => "Medio", 4 => "Alto", 5 => "Muy Alto", _ => "N/A" })
+            </span>
+        </div>
+        
+        <div class="zona-details-grid">
+            <div class="zona-detail-item">
+                <span class="zona-detail-label">📍 Dirección</span>
+                <span class="zona-detail-value">@Model.Direccion</span>
+            </div>
+            
+            <div class="zona-detail-item">
+                <span class="zona-detail-label">📅 Fecha de Registro</span>
+                <span class="zona-detail-value">@Model.FechaRegistro.ToString("dd MMMM yyyy")</span>
+            </div>
+            
+            <div class="zona-detail-item">
+                <span class="zona-detail-label">⚠️ Nivel de Peligro</span>
+                <span class="zona-detail-value">
+                    @(Model.NivelPeligro switch { 
+                        1 => "🟢 Nivel 1 - Bajo", 
+                        2 => "🔵 Nivel 2 - Medio-Bajo", 
+                        3 => "🟡 Nivel 3 - Medio", 
+                        4 => "🟠 Nivel 4 - Alto", 
+                        5 => "🔴 Nivel 5 - Muy Alto", 
+                        _ => "N/A" 
+                    })
+                </span>
+            </div>
+            
+            <div class="zona-detail-item">
+                <span class="zona-detail-label">📊 Estado</span>
+                <span class="zona-detail-value">
+                    <span class="zona-card-status @(Model.Activa ? "status-activa" : "status-inactiva")">
+                        @(Model.Activa ? "✓ Activa" : "✕ Inactiva")
+                    </span>
+                </span>
+            </div>
+            
+            @if (!string.IsNullOrEmpty(Model.Descripcion))
+            {
+                <div class="zona-detail-item zona-detail-description">
+                    <span class="zona-detail-label">📝 Descripción</span>
+                    <p class="zona-detail-value" style="margin-top: 0.5rem;">@Model.Descripcion</p>
+                </div>
+            }
+        </div>
+        
+        <div class="zona-details-actions">
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn-zona-submit" style="flex: none; background: linear-gradient(135deg, #F4A261 0%, #E89443 100%);">Editar Zona</a>
+            <a asp-action="Index" class="btn-zona-secondary">Volver al Listado</a>
+        </div>
+    </div>
+</div>

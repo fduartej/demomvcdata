@@ -1,0 +1,11 @@
+{
+  "snyk.advanced.autoSelectOrganization": true,
+  "sqltools.connections": [
+    {
+      "previewLimit": 50,
+      "driver": "SQLite",
+      "database": "${workspaceFolder:demomvcdata}/app.db",
+      "name": "sqldata"
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+@model IEnumerable<demomvcdata.Models.ZonaInsegura>
+
+@{
+    ViewData["Title"] = "Zonas Inseguras - La Molina";
+}
+
+<link rel="stylesheet" href="~/css/zonas-inseguras.css" asp-append-version="true" />
+
+<div class="zonas-container">
+    <div class="zonas-hero">
+        <h1 class="zonas-hero-title">Zonas Inseguras La Molina</h1>
+        <p class="zonas-hero-subtitle">Distrito La Molina</p>
+        <div class="zonas-hero-stats">
+            <div class="zonas-stat">
+                <span class="zonas-stat-number">@Model.Count()</span>
+                <span class="zonas-stat-label">Total Registradas</span>
+            </div>
+            <div class="zonas-stat">
+                <span class="zonas-stat-number">@Model.Count(z => z.Activa)</span>
+                <span class="zonas-stat-label">Zonas Activas</span>
+            </div>
+            <div class="zonas-stat">
+                <span class="zonas-stat-number">@Model.Count(z => z.NivelPeligro >= 4)</span>
+                <span class="zonas-stat-label">Alto Riesgo</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="zonas-actions">
+        <a asp-action="Create" class="btn-zona-primary">Registrar Nueva Zona</a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="zonas-empty">
+            <div class="zonas-empty-icon">📍</div>
+            <h2 class="zonas-empty-title">No hay zonas registradas</h2>
+            <p class="zonas-empty-text">Comienza registrando la primera zona insegura del distrito</p>
+            <a asp-action="Create" class="btn-zona-primary">Registrar Primera Zona</a>
+        </div>
+    }
+    else
+    {
+        <div class="zonas-grid">
+            @foreach (var item in Model)
+            {
+                <div class="zona-card">
+                    <div class="zona-card-header">
+                        <h3 class="zona-card-title">@item.Nombre</h3>
+                        <span class="zona-peligro-badge nivel-@item.NivelPeligro">
+                            Nivel @item.NivelPeligro
+                        </span>
+                    </div>
+                    
+                    <div class="zona-card-direccion">
+                        @item.Direccion
+                    </div>
+                    
+                    @if (!string.IsNullOrEmpty(item.Descripcion))
+                    {
+                        <p class="zona-card-description">@item.Descripcion</p>
+                    }
+                    else
+                    {
+                        <p class="zona-card-description" style="color: #D1D5DB;">Sin descripción</p>
+                    }
+                    
+                    <div class="zona-card-meta">
+                        <span class="zona-card-date">@item.FechaRegistro.ToString("dd MMM yyyy")</span>
+                        <span class="zona-card-status @(item.Activa ? "status-activa" : "status-inactiva")">
+                            @(item.Activa ? "Activa" : "Inactiva")
+                        </span>
+                    </div>
+                    
+                    <div class="zona-card-actions">
+                        <a asp-action="Edit" asp-route-id="@item.Id" class="btn-zona-action btn-zona-edit">Editar</a>
+                        <a asp-action="Details" asp-route-id="@item.Id" class="btn-zona-action btn-zona-details">Ver</a>
+                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn-zona-action btn-zona-delete">Eliminar</a>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>

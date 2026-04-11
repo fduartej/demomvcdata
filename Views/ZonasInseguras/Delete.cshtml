@@ -1,0 +1,66 @@
+@model demomvcdata.Models.ZonaInsegura
+
+@{
+    ViewData["Title"] = "Eliminar Zona Insegura";
+}
+
+<link rel="stylesheet" href="~/css/zonas-inseguras.css" asp-append-version="true" />
+
+<div class="zonas-container">
+    <div class="zona-delete-card">
+        <div class="zona-delete-warning">
+            <h3 class="zona-delete-warning-title">Confirmar Eliminación</h3>
+            <p class="zona-delete-warning-text">Esta acción no se puede deshacer. La zona será eliminada permanentemente del sistema.</p>
+        </div>
+        
+        <div class="zona-form-header">
+            <h1 class="zona-form-title" style="font-size: 2rem;">@Model.Nombre</h1>
+        </div>
+        
+        <div class="zona-details-grid">
+            <div class="zona-detail-item">
+                <span class="zona-detail-label">📍 Dirección</span>
+                <span class="zona-detail-value">@Model.Direccion</span>
+            </div>
+            
+            <div class="zona-detail-item">
+                <span class="zona-detail-label">⚠️ Nivel de Peligro</span>
+                <span class="zona-detail-value">
+                    <span class="zona-peligro-badge nivel-@Model.NivelPeligro">
+                        Nivel @Model.NivelPeligro
+                    </span>
+                </span>
+            </div>
+            
+            <div class="zona-detail-item">
+                <span class="zona-detail-label">📅 Fecha de Registro</span>
+                <span class="zona-detail-value">@Model.FechaRegistro.ToString("dd MMMM yyyy")</span>
+            </div>
+            
+            <div class="zona-detail-item">
+                <span class="zona-detail-label">📊 Estado</span>
+                <span class="zona-detail-value">
+                    <span class="zona-card-status @(Model.Activa ? "status-activa" : "status-inactiva")">
+                        @(Model.Activa ? "Activa" : "Inactiva")
+                    </span>
+                </span>
+            </div>
+            
+            @if (!string.IsNullOrEmpty(Model.Descripcion))
+            {
+                <div class="zona-detail-item zona-detail-description">
+                    <span class="zona-detail-label">📝 Descripción</span>
+                    <p class="zona-detail-value" style="margin-top: 0.5rem;">@Model.Descripcion</p>
+                </div>
+            }
+        </div>
+        
+        <form asp-action="Delete">
+            <input type="hidden" asp-for="Id" />
+            <div class="zona-form-actions">
+                <button type="submit" class="btn-zona-delete-confirm">Eliminar Zona Definitivamente</button>
+                <a asp-action="Index" class="btn-zona-secondary">Cancelar</a>
+            </div>
+        </form>
+    </div>
+</div>

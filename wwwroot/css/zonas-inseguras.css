@@ -1,0 +1,743 @@
+/* ============================================
+   ZONAS INSEGURAS - DESIGN SYSTEM
+   Estética: Modern Utility / Security Dashboard
+   ============================================ */
+
+@import url("https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700;800&family=Work+Sans:wght@300;400;500;600&display=swap");
+
+:root {
+  --zi-primary: #ff6b35;
+  --zi-danger: #e63946;
+  --zi-warning: #f4a261;
+  --zi-success: #2a9d8f;
+  --zi-dark: #1a1d29;
+  --zi-darker: #0f1117;
+  --zi-light: #e8ebf7;
+  --zi-accent: #ffd93d;
+  --zi-blue: #4361ee;
+
+  --zi-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.08);
+  --zi-shadow-md: 0 4px 16px rgba(0, 0, 0, 0.12);
+  --zi-shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.16);
+  --zi-shadow-xl: 0 16px 48px rgba(0, 0, 0, 0.24);
+}
+
+/* ============================================
+   ZONAS CONTAINER
+   ============================================ */
+.zonas-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem 1.5rem;
+  font-family: "Work Sans", sans-serif;
+}
+
+/* ============================================
+   HERO HEADER
+   ============================================ */
+.zonas-hero {
+  background: linear-gradient(135deg, var(--zi-darker) 0%, var(--zi-dark) 100%);
+  border-radius: 20px;
+  padding: 3rem;
+  margin-bottom: 3rem;
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--zi-shadow-xl);
+  animation: slideDown 0.6s ease-out;
+}
+
+.zonas-hero::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(
+    circle,
+    rgba(255, 107, 53, 0.15) 0%,
+    transparent 70%
+  );
+  border-radius: 50%;
+  transform: translate(30%, -30%);
+}
+
+.zonas-hero-title {
+  font-family: "Outfit", sans-serif;
+  font-size: 3rem;
+  font-weight: 800;
+  color: white;
+  margin: 0 0 0.5rem 0;
+  letter-spacing: -0.02em;
+  position: relative;
+  z-index: 1;
+}
+
+.zonas-hero-subtitle {
+  font-family: "Outfit", sans-serif;
+  font-size: 1.25rem;
+  font-weight: 300;
+  color: var(--zi-light);
+  margin: 0 0 2rem 0;
+  position: relative;
+  z-index: 1;
+}
+
+.zonas-hero-stats {
+  display: flex;
+  gap: 2rem;
+  position: relative;
+  z-index: 1;
+}
+
+.zonas-stat {
+  display: flex;
+  flex-direction: column;
+}
+
+.zonas-stat-number {
+  font-family: "Outfit", sans-serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--zi-primary);
+  line-height: 1;
+}
+
+.zonas-stat-label {
+  font-size: 0.875rem;
+  color: var(--zi-light);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-top: 0.25rem;
+}
+
+/* ============================================
+   ACTION BAR
+   ============================================ */
+.zonas-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.btn-zona-primary {
+  background: linear-gradient(
+    135deg,
+    var(--zi-primary) 0%,
+    var(--zi-danger) 100%
+  );
+  color: white;
+  border: none;
+  padding: 0.875rem 2rem;
+  border-radius: 12px;
+  font-family: "Outfit", sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  box-shadow: var(--zi-shadow-md);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  cursor: pointer;
+}
+
+.btn-zona-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--zi-shadow-lg);
+  color: white;
+}
+
+.btn-zona-primary::before {
+  content: "+";
+  font-size: 1.5rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+/* ============================================
+   CARDS GRID
+   ============================================ */
+.zonas-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 1.5rem;
+  animation: fadeIn 0.8s ease-out;
+}
+
+.zona-card {
+  background: white;
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: var(--zi-shadow-sm);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  animation: slideUp 0.5s ease-out backwards;
+}
+
+.zona-card:nth-child(1) {
+  animation-delay: 0.05s;
+}
+.zona-card:nth-child(2) {
+  animation-delay: 0.1s;
+}
+.zona-card:nth-child(3) {
+  animation-delay: 0.15s;
+}
+.zona-card:nth-child(4) {
+  animation-delay: 0.2s;
+}
+.zona-card:nth-child(5) {
+  animation-delay: 0.25s;
+}
+.zona-card:nth-child(6) {
+  animation-delay: 0.3s;
+}
+
+.zona-card:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--zi-shadow-lg);
+  border-color: var(--zi-primary);
+}
+
+.zona-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 1rem;
+}
+
+.zona-card-title {
+  font-family: "Outfit", sans-serif;
+  font-size: 1.375rem;
+  font-weight: 700;
+  color: var(--zi-dark);
+  margin: 0;
+  line-height: 1.2;
+}
+
+.zona-peligro-badge {
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  font-family: "Outfit", sans-serif;
+  font-weight: 700;
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+  box-shadow: var(--zi-shadow-sm);
+}
+
+.nivel-1 {
+  background: linear-gradient(135deg, #2a9d8f 0%, #21867a 100%);
+  color: white;
+}
+.nivel-2 {
+  background: linear-gradient(135deg, #4361ee 0%, #3451d9 100%);
+  color: white;
+}
+.nivel-3 {
+  background: linear-gradient(135deg, #f4a261 0%, #e89443 100%);
+  color: white;
+}
+.nivel-4 {
+  background: linear-gradient(135deg, #ff6b35 0%, #e63946 100%);
+  color: white;
+}
+.nivel-5 {
+  background: linear-gradient(135deg, #e63946 0%, #b91c1c 100%);
+  color: white;
+}
+
+.zona-card-direccion {
+  color: #6b7280;
+  font-size: 0.9375rem;
+  margin-bottom: 0.75rem;
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+}
+
+.zona-card-direccion::before {
+  content: "📍";
+  font-size: 1rem;
+  flex-shrink: 0;
+}
+
+.zona-card-description {
+  color: #4b5563;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+  min-height: 3.2em;
+}
+
+.zona-card-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1rem;
+  border-top: 1px solid rgba(0, 0, 0, 0.06);
+  margin-bottom: 1rem;
+}
+
+.zona-card-date {
+  font-size: 0.8125rem;
+  color: #9ca3af;
+}
+
+.zona-card-status {
+  padding: 0.25rem 0.75rem;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.status-activa {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.status-inactiva {
+  background: #e5e7eb;
+  color: #6b7280;
+}
+
+.zona-card-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btn-zona-action {
+  flex: 1;
+  padding: 0.625rem 1rem;
+  border-radius: 8px;
+  font-family: "Outfit", sans-serif;
+  font-weight: 600;
+  font-size: 0.875rem;
+  text-decoration: none;
+  text-align: center;
+  transition: all 0.2s ease;
+  border: none;
+  cursor: pointer;
+}
+
+.btn-zona-edit {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.btn-zona-edit:hover {
+  background: #fde68a;
+  color: #92400e;
+  transform: translateY(-1px);
+}
+
+.btn-zona-details {
+  background: #dbeafe;
+  color: #1e40af;
+}
+
+.btn-zona-details:hover {
+  background: #bfdbfe;
+  color: #1e40af;
+  transform: translateY(-1px);
+}
+
+.btn-zona-delete {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+.btn-zona-delete:hover {
+  background: #fecaca;
+  color: #991b1b;
+  transform: translateY(-1px);
+}
+
+/* ============================================
+   FORM STYLES
+   ============================================ */
+.zona-form-container {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.zona-form-card {
+  background: white;
+  border-radius: 20px;
+  padding: 3rem;
+  box-shadow: var(--zi-shadow-lg);
+  animation: slideUp 0.5s ease-out;
+}
+
+.zona-form-header {
+  margin-bottom: 2.5rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 2px solid var(--zi-light);
+}
+
+.zona-form-title {
+  font-family: "Outfit", sans-serif;
+  font-size: 2.25rem;
+  font-weight: 800;
+  color: var(--zi-dark);
+  margin: 0 0 0.5rem 0;
+}
+
+.zona-form-subtitle {
+  font-size: 1.125rem;
+  color: #6b7280;
+  margin: 0;
+}
+
+.zona-form-group {
+  margin-bottom: 1.75rem;
+}
+
+.zona-form-label {
+  display: block;
+  font-family: "Outfit", sans-serif;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: var(--zi-dark);
+  margin-bottom: 0.5rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.zona-form-input,
+.zona-form-select,
+.zona-form-textarea {
+  width: 100%;
+  padding: 0.875rem 1.125rem;
+  border: 2px solid #e5e7eb;
+  border-radius: 10px;
+  font-family: "Work Sans", sans-serif;
+  font-size: 1rem;
+  transition: all 0.2s ease;
+  background: white;
+}
+
+.zona-form-input:focus,
+.zona-form-select:focus,
+.zona-form-textarea:focus {
+  outline: none;
+  border-color: var(--zi-primary);
+  box-shadow: 0 0 0 4px rgba(255, 107, 53, 0.1);
+}
+
+.zona-form-textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+.zona-form-check {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: var(--zi-light);
+  border-radius: 10px;
+}
+
+.zona-form-check input[type="checkbox"] {
+  width: 1.25rem;
+  height: 1.25rem;
+  cursor: pointer;
+}
+
+.zona-form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2.5rem;
+  padding-top: 2rem;
+  border-top: 2px solid var(--zi-light);
+}
+
+.btn-zona-submit {
+  flex: 1;
+  background: linear-gradient(
+    135deg,
+    var(--zi-primary) 0%,
+    var(--zi-danger) 100%
+  );
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-family: "Outfit", sans-serif;
+  font-weight: 700;
+  font-size: 1.125rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--zi-shadow-md);
+}
+
+.btn-zona-submit:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--zi-shadow-lg);
+}
+
+.btn-zona-secondary {
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-family: "Outfit", sans-serif;
+  font-weight: 600;
+  font-size: 1rem;
+  text-decoration: none;
+  background: #f3f4f6;
+  color: #4b5563;
+  border: 2px solid #e5e7eb;
+  transition: all 0.2s ease;
+  display: inline-block;
+  text-align: center;
+}
+
+.btn-zona-secondary:hover {
+  background: #e5e7eb;
+  color: #1f2937;
+  border-color: #d1d5db;
+}
+
+/* ============================================
+   DETAILS VIEW
+   ============================================ */
+.zona-details-card {
+  background: white;
+  border-radius: 20px;
+  padding: 3rem;
+  box-shadow: var(--zi-shadow-lg);
+  max-width: 900px;
+  margin: 0 auto;
+  animation: slideUp 0.5s ease-out;
+}
+
+.zona-details-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 2px solid var(--zi-light);
+}
+
+.zona-details-title {
+  font-family: "Outfit", sans-serif;
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--zi-dark);
+  margin: 0;
+}
+
+.zona-details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 2rem;
+  margin-bottom: 2rem;
+}
+
+.zona-detail-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.zona-detail-label {
+  font-family: "Outfit", sans-serif;
+  font-weight: 600;
+  font-size: 0.875rem;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 0.5rem;
+}
+
+.zona-detail-value {
+  font-size: 1.125rem;
+  color: var(--zi-dark);
+  font-weight: 500;
+}
+
+.zona-detail-description {
+  grid-column: 1 / -1;
+  background: var(--zi-light);
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-top: 1rem;
+}
+
+.zona-details-actions {
+  display: flex;
+  gap: 1rem;
+  padding-top: 2rem;
+  border-top: 2px solid var(--zi-light);
+}
+
+/* ============================================
+   DELETE CONFIRMATION
+   ============================================ */
+.zona-delete-card {
+  background: white;
+  border-radius: 20px;
+  padding: 3rem;
+  box-shadow: var(--zi-shadow-xl);
+  max-width: 700px;
+  margin: 0 auto;
+  border: 3px solid var(--zi-danger);
+  animation: slideUp 0.5s ease-out;
+}
+
+.zona-delete-warning {
+  background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+  padding: 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  border-left: 4px solid var(--zi-danger);
+}
+
+.zona-delete-warning-title {
+  font-family: "Outfit", sans-serif;
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: #991b1b;
+  margin: 0 0 0.5rem 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.zona-delete-warning-title::before {
+  content: "⚠️";
+  font-size: 1.5rem;
+}
+
+.zona-delete-warning-text {
+  color: #7f1d1d;
+  margin: 0;
+}
+
+.btn-zona-delete-confirm {
+  flex: 1;
+  background: linear-gradient(135deg, var(--zi-danger) 0%, #b91c1c 100%);
+  color: white;
+  border: none;
+  padding: 1rem 2rem;
+  border-radius: 12px;
+  font-family: "Outfit", sans-serif;
+  font-weight: 700;
+  font-size: 1.125rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--zi-shadow-md);
+}
+
+.btn-zona-delete-confirm:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--zi-shadow-lg);
+}
+
+/* ============================================
+   EMPTY STATE
+   ============================================ */
+.zonas-empty {
+  text-align: center;
+  padding: 4rem 2rem;
+  background: linear-gradient(135deg, var(--zi-light) 0%, white 100%);
+  border-radius: 20px;
+  animation: fadeIn 0.5s ease-out;
+}
+
+.zonas-empty-icon {
+  font-size: 5rem;
+  margin-bottom: 1rem;
+}
+
+.zonas-empty-title {
+  font-family: "Outfit", sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--zi-dark);
+  margin-bottom: 0.5rem;
+}
+
+.zonas-empty-text {
+  color: #6b7280;
+  font-size: 1.125rem;
+  margin-bottom: 2rem;
+}
+
+/* ============================================
+   ANIMATIONS
+   ============================================ */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ============================================
+   RESPONSIVE
+   ============================================ */
+@media (max-width: 768px) {
+  .zonas-hero {
+    padding: 2rem 1.5rem;
+  }
+
+  .zonas-hero-title {
+    font-size: 2rem;
+  }
+
+  .zonas-hero-stats {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .zonas-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .zona-details-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .zona-form-card {
+    padding: 2rem 1.5rem;
+  }
+
+  .zona-details-card {
+    padding: 2rem 1.5rem;
+  }
+}
