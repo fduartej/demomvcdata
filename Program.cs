@@ -22,6 +22,15 @@ if (!string.IsNullOrWhiteSpace(redisConfiguration))
 
 builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
+// Configurar Session State
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Tiempo de expiración de la sesión
+    options.Cookie.HttpOnly = true; // Protección XSS
+    options.Cookie.IsEssential = true; // Necesario para GDPR
+});
+
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
@@ -40,6 +49,8 @@ else
 
 app.UseHttpsRedirection();
 app.UseRouting();
+
+app.UseSession(); // Habilitar Session State
 
 app.UseAuthorization();
 

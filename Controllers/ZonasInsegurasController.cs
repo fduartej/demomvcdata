@@ -34,15 +34,19 @@ public class ZonasInsegurasController : Controller
         if (zonasDesdeCache != null)
         {
             _logger.LogInformation("Zonas inseguras obtenidas desde la caché.");
+            ViewData["ZonasCount"] = zonasDesdeCache.Count();
             return View(zonasDesdeCache);
         }
 
         var zonas = _context.ZonasInseguras.AsQueryable();
+        
 
         if (nivel.HasValue)
         {
             zonas = zonas.Where(z => z.NivelPeligro == nivel.Value);
         }
+ 
+       ViewData["ZonasCount"] = await zonas.CountAsync();
 
         var resultado = await zonas.ToListAsync();
         await TrySetIndexInCacheAsync(cacheKey, resultado);
@@ -64,6 +68,10 @@ public class ZonasInsegurasController : Controller
         {
             return NotFound();
         }
+
+        // Guardar la zona seleccionada en Session State
+        HttpContext.Session.SetString("ZonaSeleccionada", JsonSerializer.Serialize(zonaInsegura));
+        _logger.LogInformation("Zona '{NombreZona}' guardada en Session State", zonaInsegura.Nombre);
 
         return View(zonaInsegura);
     }

@@ -23,6 +23,16 @@ public class HomeController : Controller
         return View();
     }
 
+    public IActionResult Cookies()
+    {
+        // Leer las cookies del usuario
+        ViewBag.UserEmail = Request.Cookies["UserEmail"] ?? "No disponible";
+        ViewBag.UserId = Request.Cookies["UserId"] ?? "No disponible";
+        ViewBag.UserName = Request.Cookies["UserName"] ?? "No disponible";
+        
+        return View();
+    }
+
     [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
     public IActionResult Error()
     {

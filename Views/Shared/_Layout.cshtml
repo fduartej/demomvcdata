@@ -29,6 +29,39 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
+                        <li class="nav-item">
+                            <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Cookies">Cookies</a>
+                        </li>
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle text-dark" href="#" id="zonaSeleccionadaDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                📍 Zona Seleccionada
+                            </a>
+                            <ul class="dropdown-menu" aria-labelledby="zonaSeleccionadaDropdown">
+                                @{
+                                    var zonaSeleccionadaJson = Context.Session.GetString("ZonaSeleccionada");
+                                    if (!string.IsNullOrEmpty(zonaSeleccionadaJson))
+                                    {
+                                        var zonaSeleccionada = System.Text.Json.JsonSerializer.Deserialize<demomvcdata.Models.ZonaInsegura>(zonaSeleccionadaJson);
+                                        if (zonaSeleccionada != null)
+                                        {
+                                            <li><h6 class="dropdown-header">@zonaSeleccionada.Nombre</h6></li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li><span class="dropdown-item-text"><strong>Dirección:</strong> @zonaSeleccionada.Direccion</span></li>
+                                            <li><span class="dropdown-item-text"><strong>Nivel:</strong> @zonaSeleccionada.NivelPeligro</span></li>
+                                            <li><span class="dropdown-item-text"><strong>Estado:</strong> @(zonaSeleccionada.Activa ? "Activa" : "Inactiva")</span></li>
+                                            <li><hr class="dropdown-divider"></li>
+                                            <li><a class="dropdown-item" asp-area="" asp-controller="ZonasInseguras" asp-action="Details" asp-route-id="@zonaSeleccionada.Id">Ver Detalles</a></li>
+                                        }
+                                    }
+                                    else
+                                    {
+                                        <li><span class="dropdown-item-text text-muted">No se ha seleccionado ninguna zona</span></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item" asp-area="" asp-controller="ZonasInseguras" asp-action="Index">Ir a Zonas Inseguras</a></li>
+                                    }
+                                }
+                            </ul>
+                        </li>
                     </ul>
                     <partial name="_LoginPartial" />
                 </div>
@@ -43,7 +76,7 @@
 
     <footer class="border-top footer text-muted">
         <div class="container">
-            &copy; 2026 - demomvcdata - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            &copy; 2026 - demomvcdata - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a> - <a asp-area="" asp-controller="Home" asp-action="Cookies">Cookies</a>
         </div>
     </footer>
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
