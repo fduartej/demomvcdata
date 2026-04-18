@@ -20,8 +20,10 @@ if (!string.IsNullOrWhiteSpace(redisConfiguration))
     });
 }
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ApplicationDbContext>();
+builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<ApplicationDbContext>()
+    .AddDefaultUI()
+    .AddDefaultTokenProviders();
 
 // Configurar Session State
 builder.Services.AddSession(options =>
@@ -34,6 +36,8 @@ builder.Services.AddSession(options =>
 builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
+
+
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -65,6 +69,7 @@ app.MapRazorPages()
    .WithStaticAssets();
 
 app.Run();
+
 
 static ConfigurationOptions BuildRedisConfigurationOptions(string redisConfiguration)
 {
