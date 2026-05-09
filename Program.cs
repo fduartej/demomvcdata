@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using demomvcdata.Data;
+using demomvcdata.Integrations;
+using demomvcdata.Services;
 using StackExchange.Redis;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -24,6 +26,10 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => options.Sign
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultUI()
     .AddDefaultTokenProviders();
+
+builder.Services.AddScoped<IZonasInsegurasService, ZonasInsegurasService>();
+builder.Services.Configure<NewsDataOptions>(builder.Configuration.GetSection("NewsData"));
+builder.Services.AddHttpClient<INoticiasIntegration, NewsDataIntegration>();
 
 // Configurar Session State
 builder.Services.AddSession(options =>

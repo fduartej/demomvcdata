@@ -1,0 +1,55 @@
+@baseUrl = https://localhost:7164
+@id = 1
+
+
+### Listar todas las zonas inseguras
+GET {{baseUrl}}/api/ZonasInsegurasApi
+Accept: application/json
+
+### Listar zonas inseguras filtrando por nivel
+GET {{baseUrl}}/api/ZonasInsegurasApi?nivel=3
+Accept: application/json
+
+### Obtener una zona insegura por id
+GET {{baseUrl}}/api/ZonasInsegurasApi/{{id}}
+Accept: application/json
+
+### Crear una zona insegura
+POST {{baseUrl}}/api/ZonasInsegurasApi
+Content-Type: application/json
+Accept: application/json
+
+{
+  "nombre": "Parque sin iluminación",
+  "direccion": "Av. Central 123",
+  "nivelPeligro": 4,
+  "descripcion": "Zona con poca iluminación y poca presencia policial.",
+  "fechaRegistro": "2026-05-08T00:00:00",
+  "activa": true
+}
+
+### Modificar una zona insegura existente
+PUT {{baseUrl}}/api/ZonasInsegurasApi/{{id}}
+Content-Type: application/json
+Accept: application/json
+
+{
+  "id": 1,
+  "nombre": "Parque sin iluminación actualizado",
+  "direccion": "Av. Central 123",
+  "nivelPeligro": 5,
+  "descripcion": "Se actualizó el nivel de peligro tras una nueva inspección.",
+  "fechaRegistro": "2026-05-08T00:00:00",
+  "activa": true
+}
+
+
+@newsDataBaseUrl = https://newsdata.io/api/1/news
+@newsDataCountry = pe
+@newsDataLanguage = es
+@newsDataQuery = inseguridad
+@newsDataApiKey = pub_40439353e82b4a7187c0d9fc83fb4df1
+
+### Noticias peruanas desde NewsData
+GET {{newsDataBaseUrl}}?apikey={{newsDataApiKey}}&country={{newsDataCountry}}&language={{newsDataLanguage}}&q={{newsDataQuery}}
+Accept: application/json

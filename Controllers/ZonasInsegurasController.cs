@@ -1,26 +1,19 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.EntityFrameworkCore;
-using demomvcdata.Data;
 using demomvcdata.Models;
-using StackExchange.Redis;
 using System.Text.Json;
+using demomvcdata.Services;
 
 namespace demomvcdata.Controllers;
 
 public class ZonasInsegurasController : Controller
 {
-    private readonly ApplicationDbContext _context;
-    private readonly IDistributedCache _cache;
+    private readonly IZonasInsegurasService _zonasInsegurasService;
     private readonly ILogger<ZonasInsegurasController> _logger;
 
-
-    private const string CacheKeyPrefix = "zonas-inseguras:index";
-
-    public ZonasInsegurasController(ApplicationDbContext context, IDistributedCache cache, ILogger<ZonasInsegurasController> logger)
+    public ZonasInsegurasController(IZonasInsegurasService zonasInsegurasService, ILogger<ZonasInsegurasController> logger)
     {
-        _context = context;
-        _cache = cache;
+        _zonasInsegurasService = zonasInsegurasService;
         _logger = logger;
     }
 
@@ -29,29 +22,10 @@ public class ZonasInsegurasController : Controller
     {
         ViewBag.NivelActual = nivel;
 
-        var cacheKey = BuildCacheKey(nivel);
-        var zonasDesdeCache = await TryGetIndexFromCacheAsync(cacheKey);
-        if (zonasDesdeCache != null)
-        {
-            _logger.LogInformation("Zonas inseguras obtenidas desde la caché.");
-            ViewData["ZonasCount"] = zonasDesdeCache.Count();
-            return View(zonasDesdeCache);
-        }
+        var zonas = await _zonasInsegurasService.GetAllAsync(nivel);
+        ViewData["ZonasCount"] = zonas.Count;
 
-        var zonas = _context.ZonasInseguras.AsQueryable();
-        
-
-        if (nivel.HasValue)
-        {
-            zonas = zonas.Where(z => z.NivelPeligro == nivel.Value);
-        }
- 
-       ViewData["ZonasCount"] = await zonas.CountAsync();
-
-        var resultado = await zonas.ToListAsync();
-        await TrySetIndexInCacheAsync(cacheKey, resultado);
-
-        return View(resultado);
+        return View(zonas);
     }
 
     // GET: ZonasInseguras/Details/5
@@ -62,8 +36,7 @@ public class ZonasInsegurasController : Controller
             return NotFound();
         }
 
-        var zonaInsegura = await _context.ZonasInseguras
-            .FirstOrDefaultAsync(m => m.Id == id);
+        var zonaInsegura = await _zonasInsegurasService.GetByIdAsync(id.Value);
         if (zonaInsegura == null)
         {
             return NotFound();
@@ -89,9 +62,7 @@ public class ZonasInsegurasController : Controller
     {
         if (ModelState.IsValid)
         {
-            _context.Add(zonaInsegura);
-            await _context.SaveChangesAsync();
-            await InvalidateIndexCacheAsync();
+            await _zonasInsegurasService.CreateAsync(zonaInsegura);
             return RedirectToAction(nameof(Index));
         }
         return View(zonaInsegura);
@@ -105,7 +76,7 @@ public class ZonasInsegurasController : Controller
             return NotFound();
         }
 
-        var zonaInsegura = await _context.ZonasInseguras.FindAsync(id);
+        var zonaInsegura = await _zonasInsegurasService.GetByIdAsync(id.Value);
         if (zonaInsegura == null)
         {
             return NotFound();
@@ -127,20 +98,15 @@ public class ZonasInsegurasController : Controller
         {
             try
             {
-                _context.Update(zonaInsegura);
-                await _context.SaveChangesAsync();
-                await InvalidateIndexCacheAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!ZonaInseguraExists(zonaInsegura.Id))
+                var updated = await _zonasInsegurasService.UpdateAsync(id, zonaInsegura);
+                if (!updated)
                 {
                     return NotFound();
                 }
-                else
-                {
-                    throw;
-                }
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                throw;
             }
             return RedirectToAction(nameof(Index));
         }
@@ -155,8 +121,7 @@ public class ZonasInsegurasController : Controller
             return NotFound();
         }
 
-        var zonaInsegura = await _context.ZonasInseguras
-            .FirstOrDefaultAsync(m => m.Id == id);
+        var zonaInsegura = await _zonasInsegurasService.GetByIdAsync(id.Value);
         if (zonaInsegura == null)
         {
             return NotFound();
@@ -170,90 +135,12 @@ public class ZonasInsegurasController : Controller
     [ValidateAntiForgeryToken]
     public async Task<IActionResult> DeleteConfirmed(int id)
     {
-        var zonaInsegura = await _context.ZonasInseguras.FindAsync(id);
-        if (zonaInsegura != null)
+        var deleted = await _zonasInsegurasService.DeleteAsync(id);
+        if (!deleted)
         {
-            _context.ZonasInseguras.Remove(zonaInsegura);
+            return NotFound();
         }
 
-        await _context.SaveChangesAsync();
-        await InvalidateIndexCacheAsync();
         return RedirectToAction(nameof(Index));
-    }
-
-    private bool ZonaInseguraExists(int id)
-    {
-        return _context.ZonasInseguras.Any(e => e.Id == id);
-    }
-
-    private static string BuildCacheKey(int? nivel)
-    {
-        return nivel.HasValue ? $"{CacheKeyPrefix}:nivel:{nivel.Value}" : $"{CacheKeyPrefix}:all";
-    }
-
-    private async Task InvalidateIndexCacheAsync()
-    {
-        await TryRemoveCacheKeyAsync(BuildCacheKey(null));
-
-        for (var nivel = 1; nivel <= 5; nivel++)
-        {
-            await TryRemoveCacheKeyAsync(BuildCacheKey(nivel));
-        }
-    }
-
-    private async Task<List<ZonaInsegura>?> TryGetIndexFromCacheAsync(string cacheKey)
-    {
-        try
-        {
-            var zonasCached = await _cache.GetStringAsync(cacheKey);
-            if (string.IsNullOrWhiteSpace(zonasCached))
-            {
-                return null;
-            }
-
-            return JsonSerializer.Deserialize<List<ZonaInsegura>>(zonasCached);
-        }
-        catch (RedisConnectionException)
-        {
-            return null;
-        }
-        catch (RedisTimeoutException)
-        {
-            return null;
-        }
-    }
-
-    private async Task TrySetIndexInCacheAsync(string cacheKey, List<ZonaInsegura> zonas)
-    {
-        try
-        {
-            await _cache.SetStringAsync(
-                cacheKey,
-                JsonSerializer.Serialize(zonas),
-                new DistributedCacheEntryOptions
-                {
-                    AbsoluteExpirationRelativeToNow = TimeSpan.FromMinutes(10)
-                });
-        }
-        catch (RedisConnectionException)
-        {
-        }
-        catch (RedisTimeoutException)
-        {
-        }
-    }
-
-    private async Task TryRemoveCacheKeyAsync(string cacheKey)
-    {
-        try
-        {
-            await _cache.RemoveAsync(cacheKey);
-        }
-        catch (RedisConnectionException)
-        {
-        }
-        catch (RedisTimeoutException)
-        {
-        }
     }
 }
