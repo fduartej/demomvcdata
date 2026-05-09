@@ -29,7 +29,9 @@ builder.Services.AddIdentity<IdentityUser, IdentityRole>(options => options.Sign
 
 builder.Services.AddScoped<IZonasInsegurasService, ZonasInsegurasService>();
 builder.Services.Configure<NewsDataOptions>(builder.Configuration.GetSection("NewsData"));
+builder.Services.Configure<MercadoPagoOptions>(builder.Configuration.GetSection("MercadoPago"));
 builder.Services.AddHttpClient<INoticiasIntegration, NewsDataIntegration>();
+builder.Services.AddHttpClient();
 
 // Configurar Session State
 builder.Services.AddSession(options =>
